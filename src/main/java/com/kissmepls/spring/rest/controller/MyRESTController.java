@@ -1,11 +1,10 @@
 package com.kissmepls.spring.rest.controller;
 
 import com.kissmepls.spring.rest.entity.Employee;
+import com.kissmepls.spring.rest.exception_handling.NoSuchEmployeeException;
 import com.kissmepls.spring.rest.service.EmployeeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -23,4 +22,23 @@ public class MyRESTController
         List<Employee> allEmployees = employeeService.getAllEmployees();
         return allEmployees;
     }
+
+    @GetMapping("/employees/{id}")
+    public Employee getEmployee(@PathVariable("id") int id)
+    {
+        Employee employee = employeeService.getEmployee(id);
+        if (employee == null)
+        {
+            throw new NoSuchEmployeeException("There is no employee with ID = " + id + " in Database");
+        }
+        return employee;
+    }
+
+    @PostMapping("/employees")
+    public Employee addNewEmployee(@RequestBody Employee employee)
+    {
+        employeeService.saveEmployee(employee);
+        return employee;
+    }
+
 }
